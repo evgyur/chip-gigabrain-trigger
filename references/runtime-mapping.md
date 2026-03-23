@@ -18,3 +18,7 @@ Map Trigger.dev runtime events into conservative Task Capsule reconcile states.
 ## Rule
 Runtime state may update `executor_ref`, notes, and candidate checkpoint movement.
 It must not bypass artifact or definition-of-done verification.
+
+## Current implementation note
+The current Gigabrain v1 rail uses SDK-based retrieval (`runs.retrieve`) for post-launch runtime reconciliation.
+This gives us real runtime status mapping without yet depending on a public webhook receiver.

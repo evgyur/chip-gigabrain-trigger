@@ -15,6 +15,7 @@ It is intended to own:
 
 Current v1 implementation:
 - local launcher script for SDK-based run trigger: `scripts/launch_trigger_run.mjs`
+- runtime status reconcile script via Management API: `scripts/reconcile_trigger_run.mjs`
 
 ## Boundary
 - `chip-gigabrain-task-capsule` remains the canonical durable task contract
