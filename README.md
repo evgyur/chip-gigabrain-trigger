@@ -26,6 +26,11 @@ A minimal Trigger.dev task project exists (`trigger.config.ts`, `trigger/` tasks
 Task Capsule adapter:
 - `resume_kind=trigger_run`
 
+## Setup prerequisites
+- Trigger.dev CLI login is required: `trigger.dev login`
+- `TRIGGER_PROJECT_REF` must be set for this module
+- webhook secret and mapping rules must be configured before live capsule resume claims
+
 ## References
 - `references/architecture.md`
 - `references/operator-runbook.md`
