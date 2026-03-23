@@ -22,3 +22,11 @@ It must not bypass artifact or definition-of-done verification.
 ## Current implementation note
 The current Gigabrain v1 rail uses SDK-based retrieval (`runs.retrieve`) for post-launch runtime reconciliation.
 This gives us real runtime status mapping without yet depending on a public webhook receiver.
+
+Completion rule in v1:
+- `COMPLETED` + verification pass => capsule may be marked `done`
+- otherwise remain in `trigger_run_awaiting_verification`
+
+Operational caveat:
+- completion proof requires an available Trigger worker or deployed version that can actually execute the run
+- without that, runtime status may remain `QUEUED` even if launch succeeded

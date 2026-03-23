@@ -34,11 +34,12 @@ The prototype proves:
 - run identity is captured in `executor_ref`
 - capsule can conservatively stop in `trigger_run_awaiting_verification`
 - coding-stage metadata survives the launch path
+- capsule can auto-complete to `done` when runtime status reaches `COMPLETED` and verification rules pass
 
 It does **not** yet prove:
 - remote code editing in Trigger.dev Cloud
-- webhook-driven completion
-- automatic artifact verification
+- public webhook-driven completion
+- file-artifact-backed completion for real coding outputs at scale
 - full long-lived human-in-the-loop coding loops
 
 ## Why this still matters
