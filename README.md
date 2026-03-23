@@ -38,4 +38,5 @@ Task Capsule adapter:
 - `references/architecture.md`
 - `references/operator-runbook.md`
 - `references/runtime-mapping.md`
+- `references/coding-stage-prototype.md`
 - `../chip-gigabrain-task-capsule/references/trigger-run-adapter.md`

@@ -13,3 +13,28 @@ export type TriggerRunLaunchResult = {
   receivedAt: string;
   nextCheckpoint: string;
 };
+
+export type CodingStagePayload = TriggerRunLaunchPayload & {
+  input: {
+    repo?: string;
+    cwd?: string;
+    stageGoal?: string;
+    deliverables?: string[];
+    mode?: "implementation" | "verification" | "repair" | string;
+    [key: string]: unknown;
+  };
+  metadata?: TriggerRunLaunchPayload["metadata"] & {
+    cwd?: string;
+  };
+};
+
+export type CodingStageResult = TriggerRunLaunchResult & {
+  stage: {
+    repo: string;
+    cwd: string;
+    stageGoal: string;
+    deliverables: string[];
+    mode: string;
+  };
+  verificationHint: "await_artifact_verification";
+};

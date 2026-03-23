@@ -2,6 +2,7 @@ import fs from "node:fs";
 import process from "node:process";
 import { configure } from "@trigger.dev/sdk";
 import { nightlyDigest } from "../dist/trigger/nightlyDigest.js";
+import { codingStage } from "../dist/trigger/codingStage.js";
 
 function argValue(name) {
   const idx = process.argv.indexOf(name);
@@ -32,6 +33,8 @@ configure({
 const taskRegistry = {
   nightlyDigest,
   "gigabrain-nightly-digest": nightlyDigest,
+  codingStage,
+  "gigabrain-coding-stage": codingStage,
 };
 
 const task = taskRegistry[taskName];
