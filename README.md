@@ -13,6 +13,9 @@ It is intended to own:
 - payload normalization
 - operator runbooks
 
+Current v1 implementation:
+- local launcher script for SDK-based run trigger: `scripts/launch_trigger_run.mjs`
+
 ## Boundary
 - `chip-gigabrain-task-capsule` remains the canonical durable task contract
 - `chip-gigabrain-trigger` is an optional executor integration
