@@ -18,6 +18,7 @@ function fail(message, code = 1) {
 const payloadPath = argValue("--payload");
 const resultPath = argValue("--result");
 const taskName = argValue("--task-name");
+const envName = argValue("--env") || process.env.TRIGGER_ENV || "dev";
 
 if (!payloadPath) fail("missing --payload");
 if (!resultPath) fail("missing --result");
@@ -44,11 +45,15 @@ const raw = fs.readFileSync(payloadPath, "utf8");
 const payload = JSON.parse(raw);
 
 try {
-  const handle = await task.trigger(payload);
+  const triggerOptions = envName === "prod"
+    ? { env: "prod" }
+    : {};
+  const handle = await task.trigger(payload, triggerOptions);
   const result = {
     ok: true,
     taskName,
     handle,
+    env: envName,
     triggeredAt: new Date().toISOString(),
   };
   fs.writeFileSync(resultPath, JSON.stringify(result, null, 2));
