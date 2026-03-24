@@ -82,6 +82,28 @@ npx trigger.dev deploy --env-file .env
 | `nightlyDigest` | `trigger/nightlyDigest.ts` | Nightly digest generation |
 | `codingStage` | `trigger/codingStage.ts` | Gigabrain coding stage execution |
 
+## Pilot Capsule Example
+
+Use a temporary `trigger_run` capsule when you want a real end-to-end proof without wiring a user-facing flow yet:
+
+```bash
+cd /opt/clawd-workspace
+set -a
+source /opt/clawd-workspace/skills/secret/chip-gigabrain/modules/chip-gigabrain-trigger/.env
+set +a
+python3 scripts/task_promises.py add   --title "Pilot rollout: Trigger nightly digest capsule"   --resume-kind trigger_run   --trigger-project-ref "$TRIGGER_PROJECT_REF"   --trigger-task-name gigabrain-nightly-digest   --trigger-input-json '{"scope":"pilot-rollout"}'   --trigger-idempotency-key "pilot-nightly-digest-<date>"   --webhook-secret-ref <configured-trigger-secret-env-var>   --trigger-environment prod   --definition-of-done "Record live Trigger run evidence and reconcile conservatively without false done claim"   --checkpoint "pilot-start"
+python3 scripts/task_promises.py resume --id <task_id> --owner shaw-pilot
+python3 scripts/task_promises.py reconcile
+python3 scripts/task_promises.py inspect --id <task_id> --format json
+python3 scripts/task_promises.py doctor --id <task_id> --format json
+python3 scripts/task_promises.py cancel --id <task_id> --note "pilot proof captured"
+```
+
+Expected truth for this pilot:
+- launch stores real `run_id` in `executor_ref`
+- reconcile records runtime evidence without pretending webhook completion exists
+- the temporary capsule is cancelled after proof capture so it does not pollute the queue
+
 ## Failure Handling
 
 ### Dev worker not picking up jobs
