@@ -23,8 +23,8 @@ Current v1 implementation:
 - Trigger.dev runtime is execution infrastructure, not promised-work truth
 
 ## Current status
-Scaffold with real git-ready module structure.
-A minimal Trigger.dev task project exists (`trigger.config.ts`, `trigger/` tasks, package manifest), but no live Gigabrain launch/webhook executor is implemented yet.
+Live Gigabrain launch, runtime reconcile, and signed webhook replay are implemented.
+A minimal Trigger.dev task project exists (`trigger.config.ts`, `trigger/` tasks, package manifest), and the remaining gap is a public HTTP webhook receiver rather than CLI-based verified replay.
 
 ## Planned integration point
 Task Capsule adapter:

@@ -117,7 +117,9 @@ Expected truth for this pilot:
 - Or switch to dev environment for jobs
 
 ### Webhook receiver
-- Not yet implemented (polling via reconcile is current path)
+- Signed webhook replay is implemented via `python3 /opt/clawd-workspace/scripts/task_promises.py trigger-webhook --id <task_id> --body-file <event.json> --signature <hex>`
+- Fresh live proof exists in this workspace: temporary proof task `T0223` accepted a signed `run.completed` event for a real Trigger run id
+- A public HTTP webhook receiver is still not implemented; CLI/file replay is the verified path today
 - See: `references/runtime-mapping.md`
 
 ## Health Check
