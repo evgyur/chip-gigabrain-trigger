@@ -1,8 +1,6 @@
 import fs from "node:fs";
 import process from "node:process";
-import { configure } from "@trigger.dev/sdk";
-import { nightlyDigest } from "../dist/trigger/nightlyDigest.js";
-import { codingStage } from "../dist/trigger/codingStage.js";
+import { resolveTriggerRuntimeClient } from "./resolve_trigger_runtime_client.mjs";
 
 function argValue(name) {
   const idx = process.argv.indexOf(name);
@@ -15,53 +13,70 @@ function fail(message, code = 1) {
   process.exit(code);
 }
 
+process.loadEnvFile?.(".env");
+
 const payloadPath = argValue("--payload");
 const resultPath = argValue("--result");
 const taskName = argValue("--task-name");
-const envName = argValue("--env") || process.env.TRIGGER_ENV || "dev";
 
 if (!payloadPath) fail("missing --payload");
 if (!resultPath) fail("missing --result");
 if (!taskName) fail("missing --task-name");
-if (!process.env.TRIGGER_SECRET_KEY) fail("missing TRIGGER_SECRET_KEY");
+if (!process.env.TRIGGER_PROJECT_REF) fail("missing TRIGGER_PROJECT_REF");
 if (!process.env.TRIGGER_API_URL) process.env.TRIGGER_API_URL = "https://api.trigger.dev";
-
-configure({
-  secretKey: process.env.TRIGGER_SECRET_KEY,
-  baseURL: process.env.TRIGGER_API_URL,
-});
-
-const taskRegistry = {
-  nightlyDigest,
-  "gigabrain-nightly-digest": nightlyDigest,
-  codingStage,
-  "gigabrain-coding-stage": codingStage,
-};
-
-const task = taskRegistry[taskName];
-if (!task) fail(`unknown trigger task: ${taskName}`);
 
 const raw = fs.readFileSync(payloadPath, "utf8");
 const payload = JSON.parse(raw);
+const requestedEnvironment = argValue("--env") || payload.environment || process.env.TRIGGER_ENV || "prod";
+
+const triggerOptions = {
+  idempotencyKey: typeof payload.idempotency_key === "string" ? payload.idempotency_key : undefined,
+  tags: [
+    "gigabrain",
+    "task-capsule",
+    typeof payload.taskId === "string" ? `capsule:${payload.taskId}` : "",
+    typeof taskName === "string" ? `trigger-task:${taskName}` : "",
+  ].filter(Boolean),
+  metadata: {
+    capsuleTaskId: payload.taskId,
+    checkpoint: payload.checkpoint,
+    definitionOfDone: payload.definitionOfDone,
+  },
+};
 
 try {
-  const triggerOptions = envName === "prod"
-    ? { env: "prod" }
-    : {};
-  const handle = await task.trigger(payload, triggerOptions);
+  const runtime = await resolveTriggerRuntimeClient({
+    projectRef: process.env.TRIGGER_PROJECT_REF,
+    requestedEnvironment,
+    fallbackSecretKey: process.env.TRIGGER_SECRET_KEY,
+    fallbackApiUrl: process.env.TRIGGER_API_URL,
+  });
+
+  const handle = await runtime.client.triggerTask(taskName, {
+    payload,
+    context: {},
+    options: triggerOptions,
+  });
+
   const result = {
     ok: true,
     taskName,
     handle,
-    env: envName,
+    triggerOptions,
+    requestedEnvironment,
+    resolvedEnvironment: runtime.environment,
+    resolvedApiUrl: runtime.apiUrl,
+    apiKeySource: runtime.apiKeySource,
+    apiKeyPrefix: runtime.apiKeyPrefix,
     triggeredAt: new Date().toISOString(),
   };
   fs.writeFileSync(resultPath, JSON.stringify(result, null, 2));
-  console.log(JSON.stringify({ runId: handle.id, taskName }, null, 2));
+  console.log(JSON.stringify({ runId: handle.id, taskName, environment: runtime.environment }, null, 2));
 } catch (error) {
   const result = {
     ok: false,
     taskName,
+    requestedEnvironment,
     triggeredAt: new Date().toISOString(),
     error: error instanceof Error ? { message: error.message, stack: error.stack } : { message: String(error) },
   };
