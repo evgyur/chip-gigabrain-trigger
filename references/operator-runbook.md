@@ -69,7 +69,7 @@ npx trigger.dev deploy --env-file .env
 
 ## Credentials
 
-- **Location**: `/opt/clawd-workspace/skills/secret/chip-gigabrain/modules/chip-gigabrain-trigger/.env`
+- **Location**: `/opt/clawd-workspace/skills/private/chip-gigabrain/modules/chip-gigabrain-trigger/.env`
 - **Project ref**: `proj_wmxednpiiwuzbdmiksps`
 - **Account**: `e.yurchenko@gmail.com`
 - **Dev worker**: started via watchdog script, survives session end via nohup + cron
@@ -89,7 +89,7 @@ Use a temporary `trigger_run` capsule when you want a real end-to-end proof with
 ```bash
 cd /opt/clawd-workspace
 set -a
-source /opt/clawd-workspace/skills/secret/chip-gigabrain/modules/chip-gigabrain-trigger/.env
+source /opt/clawd-workspace/skills/private/chip-gigabrain/modules/chip-gigabrain-trigger/.env
 set +a
 python3 scripts/task_promises.py add   --title "Pilot rollout: Trigger nightly digest capsule"   --resume-kind trigger_run   --trigger-project-ref "$TRIGGER_PROJECT_REF"   --trigger-task-name gigabrain-nightly-digest   --trigger-input-json '{"scope":"pilot-rollout"}'   --trigger-idempotency-key "pilot-nightly-digest-<date>"   --webhook-secret-ref <configured-trigger-secret-env-var>   --trigger-environment prod   --definition-of-done "Record live Trigger run evidence and reconcile conservatively without false done claim"   --checkpoint "pilot-start"
 python3 scripts/task_promises.py resume --id <task_id> --owner shaw-pilot
