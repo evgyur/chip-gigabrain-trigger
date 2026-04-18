@@ -1,7 +1,7 @@
 {
   "name": "chip-gigabrain-trigger",
   "version": "0.1.0",
-  "private": false,
+  "private": true,
   "type": "module",
   "description": "Trigger.dev integration module for Gigabrain Task Capsule",
   "scripts": {
